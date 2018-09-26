@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<head>
+  <title>Choropleth and Bar_Graph html</title>
+  <meta charset="utf-8">
+
+  <!-- Check: https://github.com/vega/vega-embed -->
+
+  <script src="https://cdn.jsdelivr.net/npm/vega@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@3"></script>
+
+</head>
+<body>
+<h4>Losses due to various reasons in different states</h4>
+<!-- Container for the visualization -->
+<div id="vis1"></div>
+<div id="vis2"></div>
+
+
+<script type="text/javascript">
+  // var spec = "our_bar_chart.json";
+  // this does not work when you run locally due to security reasons - it needs to be read from a server
+  var spec = "https://raw.githubusercontent.com/lchennar/Visual/master/Cloropleth.json";
+  vegaEmbed('#vis1', spec).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+  var spec = "https://raw.githubusercontent.com/lchennar/Visual/master/BarGraph.json";
+  vegaEmbed('#vis2', spec).then(function(result) {
+    // Access the Vega view instance (https://vega.github.io/vega/docs/api/view/) as result.view
+  }).catch(console.error);
+</script>
+
+
+</body>
+</html>
