@@ -1,0 +1,85 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "width": 800,
+  "height": 410,
+  "padding": 5,
+  "autosize": "fit",
+
+  "title": {
+    "text": {"signal": "'Losses2015 by sum of all Damage in each state'"},
+    "anchor": "start",
+    "frame": "group"
+  },
+
+  "data": [
+    {
+      "name": "Losses2015",
+      "url": "https://raw.githubusercontent.com/lchennar/Visual/master/losses2015_transformed.csv",
+      "format": {"type": "csv", "parse": "auto"},
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum.Amount != null && datum.Damage_Descp != null"
+        },
+        {
+          "type": "aggregate",
+          "groupby": ["Damage_Descp"],
+          "ops": ["sum"],
+          "fields": ["Amount"],
+          "as": ["TotalLoss"]
+        }
+       
+      ]
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "rect",
+      "from": {"data": "Losses2015"},
+      "encode": {
+        "enter": {"tooltip": {"signal": "format(datum.TotalLoss,'10')"}},
+        "update": {
+          "x": {"scale": "x", "value": 6000000},
+          "x2": {"scale": "x", "field": "TotalLoss"},
+          "y": {"scale": "y", "field": "Damage_Descp"},
+          "height": {"scale": "y", "band": 1}
+
+        }
+      }
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "Losses2015", "field": "TotalLoss"},
+      "range": "width",
+      "nice": true
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {
+        "data": "Losses2015", "field": "Damage_Descp",
+        "sort": {"op": "max", "field": "TotalLoss", "order": "ascending"}
+      },
+      "range": "height",
+      "padding": 0.1
+    }
+  ],
+
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "format": "d",
+      "tickCount": 7
+    },
+    {
+      "scale": "y",
+      "orient": "left"
+    }
+  ]
+}
