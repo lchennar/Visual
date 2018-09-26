@@ -1,0 +1,69 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v4.json",
+  "width": 960,
+  "height": 500,
+  "autosize": "none",
+  "data": [
+    {
+      "name": "Losses2015",
+      "url": "https://raw.githubusercontent.com/lchennar/Visual/master/losses2015_transformed.csv",
+      "format": {"type": "csv", "parse": "auto"},
+      "transform": [{
+  "type": "aggregate",
+  "fields": ["Amount"],
+  "groupby": ["State_Code","State_Abv"],
+  "ops": ["sum"],
+  "as": ["Loss_Amount"]
+}]
+    },
+    {
+      "name": "states",
+      "url": "https://raw.githubusercontent.com/lchennar/Visual/master/us-10m.json",
+      "format": {"type": "topojson", "feature": "states"},
+      "transform": [
+        { "type": "lookup", "from": "Losses2015", "key": "State_Code", "fields": ["id"], "values": ["State_Code","Loss_Amount","State_Abv"] },
+        { "type": "filter", "expr": "datum.Loss_Amount != null" }
+      ]
+    }
+  ],
+
+  "projections": [
+    {
+      "name": "projection",
+      "type": "albersUsa"
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "color",
+      "type": "quantize",
+      "domain": [0, 270000000],
+      "range": {"scheme": "reds", "count": 70}
+    }
+  ],
+
+  "legends": [
+    {
+      "fill": "color",
+      "orient": "bottom-right",
+      "title": "Amount"
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "shape",
+      "from": {"data": "states"},
+      "encode": {
+        "enter": { "tooltip": {"signal": "'State_Abv'+ datum.State_Abv +' Total_Amount:  ' + format(datum.Loss_Amount,',d')"}},
+        "update": { "fill": {"scale": "color", "field": "Loss_Amount"} },
+        "hover": { "fill": {"value": "purple"} }
+      },
+      "transform": [
+        { "type": "geoshape", "projection": "projection" }
+
+      ]
+    }
+  ]
+}
